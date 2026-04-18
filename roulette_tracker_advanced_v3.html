@@ -1,0 +1,511 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Roulette Tracker Advanced</title>
+  <style>
+    :root{
+      --bg:#f8fafc; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
+      --green:#16a34a; --green-bg:#dcfce7; --red:#dc2626; --red-bg:#fee2e2;
+      --amber:#d97706; --amber-bg:#fef3c7; --blue:#2563eb; --blue-bg:#dbeafe;
+      --slate:#334155; --slate-bg:#f1f5f9;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      background:var(--bg); color:var(--text);
+    }
+    .wrap{max-width:680px; margin:0 auto; padding:16px 14px 40px;}
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:22px;
+      box-shadow:0 1px 2px rgba(0,0,0,.03); padding:16px; margin-bottom:14px;
+    }
+    .row{display:flex; gap:10px; align-items:center; justify-content:space-between;}
+    .title{font-size:24px; font-weight:800; letter-spacing:-.02em}
+    .badge{
+      padding:7px 10px; border-radius:999px; font-size:12px; font-weight:700; white-space:nowrap;
+    }
+    .b-normal{background:var(--blue-bg); color:var(--blue)}
+    .b-watch{background:var(--amber-bg); color:var(--amber)}
+    .b-danger{background:var(--red-bg); color:var(--red)}
+    .b-recovery{background:#fff7ed; color:#c2410c}
+    .b-target{background:var(--green-bg); color:var(--green)}
+    .grid2,.grid3,.grid4{display:grid; gap:10px}
+    .grid2{grid-template-columns:repeat(2,1fr)}
+    .grid3{grid-template-columns:repeat(3,1fr)}
+    .grid4{grid-template-columns:repeat(4,1fr)}
+    .stat{
+      background:#fff; border:1px solid var(--line); border-radius:18px; padding:12px;
+    }
+    .label{font-size:12px; color:var(--muted); margin-bottom:6px}
+    .value{font-size:28px; font-weight:800; letter-spacing:-.03em}
+    .value.small{font-size:18px}
+    .pos{color:var(--green)} .neg{color:var(--red)}
+    .soft{background:var(--slate-bg)}
+    button{
+      appearance:none; border:none; border-radius:18px; padding:14px 14px; font-size:16px; font-weight:800;
+      cursor:pointer; width:100%;
+    }
+    .btn-dozen{background:#e0f2fe; color:#075985}
+    .btn-street{background:#ecfccb; color:#3f6212}
+    .btn-miss{background:#fee2e2; color:#991b1b}
+    .btn-secondary{background:#e2e8f0; color:#0f172a}
+    .btn-outline{background:#fff; color:#0f172a; border:1px solid var(--line)}
+    .btn-ghost{background:#f8fafc; color:#334155; border:1px dashed var(--line)}
+    .btn-danger{background:#fff1f2; color:#be123c; border:1px solid #fecdd3}
+    input{
+      width:100%; border:1px solid var(--line); border-radius:14px; padding:12px; font-size:16px;
+      background:#fff;
+    }
+    .note{
+      border-radius:18px; padding:12px; font-size:14px; line-height:1.35; border:1px solid var(--line);
+    }
+    .note.green{background:#f0fdf4; border-color:#bbf7d0; color:#166534}
+    .note.amber{background:#fffbeb; border-color:#fde68a; color:#92400e}
+    .note.blue{background:#eff6ff; border-color:#bfdbfe; color:#1d4ed8}
+    .section-title{font-size:18px; font-weight:800; margin-bottom:10px}
+    .log{
+      max-height:380px; overflow:auto; display:flex; flex-direction:column; gap:10px;
+    }
+    .log-item{
+      border:1px solid var(--line); border-radius:18px; padding:12px; background:#fff;
+    }
+    .muted{color:var(--muted); font-size:12px}
+    .progress{
+      height:10px; background:#e2e8f0; border-radius:999px; overflow:hidden;
+    }
+    .progress > div{
+      height:100%; background:#22c55e; width:0%;
+    }
+    .kpi{display:flex; justify-content:space-between; gap:8px; padding:8px 0}
+    .pill{background:var(--slate-bg); color:var(--slate); padding:7px 10px; border-radius:999px; font-size:12px; font-weight:700}
+    .footer-space{height:20px}
+    @media (max-width:520px){
+      .grid4{grid-template-columns:repeat(2,1fr)}
+      .value{font-size:24px}
+      .title{font-size:22px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="row" style="margin-bottom:12px;">
+        <div class="title">Roulette Tracker Advanced</div>
+        <div id="statusBadge" class="badge b-normal">Normal</div>
+      </div>
+
+      <div class="grid2">
+        <div class="stat">
+          <div class="label">Bankroll</div>
+          <div id="bankroll" class="value">$214.50</div>
+        </div>
+        <div class="stat">
+          <div class="label">Session Profit</div>
+          <div id="sessionProfit" class="value pos">+$0.00</div>
+        </div>
+        <div class="stat">
+          <div class="label">Level</div>
+          <div id="level" class="value">1</div>
+        </div>
+        <div class="stat">
+          <div class="label">Session High</div>
+          <div id="sessionHigh" class="value">$214.50</div>
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <div class="grid3">
+        <div class="stat soft">
+          <div class="label">Dozen Bet</div>
+          <div id="dozenBet" class="value small">$0.30</div>
+        </div>
+        <div class="stat soft">
+          <div class="label">Each Street</div>
+          <div id="streetBet" class="value small">$0.10</div>
+        </div>
+        <div class="stat soft">
+          <div class="label">Total Bet</div>
+          <div id="totalBet" class="value small">$0.60</div>
+        </div>
+      </div>
+
+      <div style="height:14px"></div>
+
+      <div class="grid2">
+        <button class="btn-dozen" onclick="processSpin('dozen')">Dozen Hit</button>
+        <button class="btn-street" onclick="processSpin('street')">Street Hit</button>
+      </div>
+      <div style="height:10px"></div>
+      <button class="btn-miss" onclick="processSpin('miss')">Miss / Loss</button>
+
+      <div id="targetMsg" class="note green" style="display:none; margin-top:12px;">
+        Target reached. Exit the session and reset when ready.
+      </div>
+      <div id="recoveryMsg" class="note amber" style="display:none; margin-top:12px;">
+        Recovery mode active. Keep playing until bankroll gets back to the original starting bankroll, then exit.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Session Settings</div>
+      <div class="grid2">
+        <div>
+          <div class="label">Start Bankroll</div>
+          <input id="startingBankrollInput" type="number" step="0.01" />
+        </div>
+        <div>
+          <div class="label">Target Profit</div>
+          <input id="targetProfitInput" type="number" step="0.10" />
+        </div>
+        <div>
+          <div class="label">Base Unit</div>
+          <input id="baseUnitInput" type="number" step="0.01" />
+        </div>
+        <div>
+          <div class="label">Session Name</div>
+          <input id="sessionNameInput" type="text" placeholder="Optional" />
+        </div>
+      </div>
+      <div style="height:12px"></div>
+      <div class="grid2">
+        <button class="btn-secondary" onclick="resetSession()">Reset Session</button>
+        <button class="btn-outline" onclick="startFromCurrent()">Start From Current</button>
+        <button class="btn-ghost" onclick="undoLast()">Undo Last Spin</button>
+        <button class="btn-danger" onclick="finishAndSaveSession()">Finish & Save Session</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Milestones</div>
+      <div class="grid2">
+        <div>
+          <div class="kpi"><span class="muted">To $300</span><span id="to300" class="pill">$89.80 left</span></div>
+          <div class="progress"><div id="p300"></div></div>
+        </div>
+        <div>
+          <div class="kpi"><span class="muted">To $500</span><span id="to500" class="pill">$289.80 left</span></div>
+          <div class="progress"><div id="p500"></div></div>
+        </div>
+        <div>
+          <div class="kpi"><span class="muted">To $1000</span><span id="to1000" class="pill">$789.80 left</span></div>
+          <div class="progress"><div id="p1000"></div></div>
+        </div>
+        <div>
+          <div class="kpi"><span class="muted">Today Total</span><span id="todayTotal" class="pill">$0.00</span></div>
+          <div class="progress"><div id="pToday"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Daily Stats</div>
+      <div class="grid4">
+        <div class="stat soft">
+          <div class="label">Saved Sessions</div>
+          <div id="savedSessions" class="value small">0</div>
+        </div>
+        <div class="stat soft">
+          <div class="label">Win Days</div>
+          <div id="winDays" class="value small">0</div>
+        </div>
+        <div class="stat soft">
+          <div class="label">Avg Saved</div>
+          <div id="avgSaved" class="value small">$0.00</div>
+        </div>
+        <div class="stat soft">
+          <div class="label">Best Saved</div>
+          <div id="bestSaved" class="value small">$0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Spin Log</div>
+      <div id="spinLog" class="log"></div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Saved Session History</div>
+      <div id="sessionHistory" class="log"></div>
+    </div>
+
+    <div class="footer-space"></div>
+  </div>
+
+<script>
+const storageKey = "rouletteTrackerAdvanced_v1";
+
+const state = {
+  startingBankroll: 214.50,
+  bankroll: 214.50,
+  sessionHigh: 214.50,
+  targetProfit: 6.5,
+  baseUnit: 0.10,
+  level: 1,
+  dozenWinChain: 0,
+  recoveryMode: false,
+  spins: [],
+  historySnapshots: [],
+  savedSessions: []
+};
+
+function fmt(n){ return "$" + Number(n).toFixed(2); }
+function fmtSigned(n){ return (n >= 0 ? "+" : "-") + fmt(Math.abs(n)); }
+function round2(n){ return Math.round(n * 100) / 100; }
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+
+function saveState(){
+  localStorage.setItem(storageKey, JSON.stringify(state));
+}
+function loadState(){
+  const raw = localStorage.getItem(storageKey);
+  if(!raw) return;
+  try{
+    const data = JSON.parse(raw);
+    Object.assign(state, data);
+  }catch(e){}
+}
+function getStatus(){
+  const profit = state.bankroll - state.startingBankroll;
+  if (profit >= state.targetProfit) return ["Target hit", "b-target"];
+  if (state.recoveryMode) return ["Recovery mode", "b-recovery"];
+  if (state.level >= 8) return ["High risk", "b-danger"];
+  if (state.level >= 5) return ["Watch zone", "b-watch"];
+  return ["Normal", "b-normal"];
+}
+function takeSnapshot(){
+  state.historySnapshots.unshift({
+    startingBankroll: state.startingBankroll,
+    bankroll: state.bankroll,
+    sessionHigh: state.sessionHigh,
+    targetProfit: state.targetProfit,
+    baseUnit: state.baseUnit,
+    level: state.level,
+    dozenWinChain: state.dozenWinChain,
+    recoveryMode: state.recoveryMode,
+    spins: JSON.parse(JSON.stringify(state.spins))
+  });
+}
+function updateUI(){
+  const profit = round2(state.bankroll - state.startingBankroll);
+  document.getElementById("bankroll").textContent = fmt(state.bankroll);
+  const sp = document.getElementById("sessionProfit");
+  sp.textContent = fmtSigned(profit);
+  sp.className = "value " + (profit >= 0 ? "pos" : "neg");
+  document.getElementById("level").textContent = String(state.level);
+  document.getElementById("sessionHigh").textContent = fmt(state.sessionHigh);
+  document.getElementById("dozenBet").textContent = fmt(3 * state.level * state.baseUnit);
+  document.getElementById("streetBet").textContent = fmt(1 * state.level * state.baseUnit);
+  document.getElementById("totalBet").textContent = fmt(6 * state.level * state.baseUnit);
+
+  const [label, cls] = getStatus();
+  const badge = document.getElementById("statusBadge");
+  badge.textContent = label;
+  badge.className = "badge " + cls;
+
+  document.getElementById("targetMsg").style.display = profit >= state.targetProfit ? "block" : "none";
+  document.getElementById("recoveryMsg").style.display = state.recoveryMode ? "block" : "none";
+
+  document.getElementById("startingBankrollInput").value = state.startingBankroll;
+  document.getElementById("targetProfitInput").value = state.targetProfit;
+  document.getElementById("baseUnitInput").value = state.baseUnit;
+
+  renderSpinLog();
+  renderSessionHistory();
+  renderStats();
+  saveState();
+}
+function renderSpinLog(){
+  const box = document.getElementById("spinLog");
+  if(state.spins.length === 0){
+    box.innerHTML = '<div class="note blue">No spins yet. Tap a result to start tracking.</div>';
+    return;
+  }
+  box.innerHTML = state.spins.map(s => `
+    <div class="log-item">
+      <div class="row">
+        <div>
+          <div style="font-weight:800">Spin ${s.spin} • L${s.levelBefore}</div>
+          <div class="muted">${s.note}</div>
+        </div>
+        <div style="font-weight:800; color:${s.delta >= 0 ? "#16a34a" : "#dc2626"}">${s.delta >= 0 ? "+" : "-"}${fmt(Math.abs(s.delta))}</div>
+      </div>
+      <div style="height:8px"></div>
+      <div class="row muted">
+        <span>Bankroll: ${fmt(s.bankrollAfter)}</span>
+        <span>High: ${fmt(s.highAfter)}</span>
+      </div>
+    </div>
+  `).join("");
+}
+function renderSessionHistory(){
+  const box = document.getElementById("sessionHistory");
+  if(state.savedSessions.length === 0){
+    box.innerHTML = '<div class="note blue">No saved sessions yet. Tap Finish & Save Session when you are done.</div>';
+    return;
+  }
+  box.innerHTML = state.savedSessions.slice().reverse().map((s, i) => `
+    <div class="log-item">
+      <div class="row">
+        <div>
+          <div style="font-weight:800">${s.name || "Session"} • ${s.date}</div>
+          <div class="muted">${s.spins} spins • start ${fmt(s.start)} • end ${fmt(s.end)}</div>
+        </div>
+        <div style="font-weight:800; color:${s.profit >= 0 ? "#16a34a" : "#dc2626"}">${fmtSigned(s.profit)}</div>
+      </div>
+    </div>
+  `).join("");
+}
+function renderStats(){
+  const saved = state.savedSessions;
+  const today = todayStr();
+  const todaySessions = saved.filter(s => s.date === today);
+  const todayTotal = round2(todaySessions.reduce((a,b)=>a+b.profit,0));
+
+  document.getElementById("todayTotal").textContent = fmt(todayTotal);
+  document.getElementById("savedSessions").textContent = saved.length;
+  const winDays = [...new Set(saved.filter(s => s.profit > 0).map(s => s.date))].length;
+  document.getElementById("winDays").textContent = winDays;
+  const avg = saved.length ? round2(saved.reduce((a,b)=>a+b.profit,0)/saved.length) : 0;
+  const best = saved.length ? Math.max(...saved.map(s => s.profit)) : 0;
+  document.getElementById("avgSaved").textContent = fmt(avg);
+  document.getElementById("bestSaved").textContent = fmt(best);
+
+  updateMilestone("300", 300);
+  updateMilestone("500", 500);
+  updateMilestone("1000", 1000);
+
+  const todayGoalBase = 20;
+  const pctToday = Math.max(0, Math.min(100, (todayTotal / todayGoalBase) * 100));
+  document.getElementById("pToday").style.width = pctToday + "%";
+}
+function updateMilestone(id, goal){
+  const current = state.bankroll;
+  const start = state.startingBankroll;
+  const left = Math.max(0, round2(goal - current));
+  document.getElementById("to"+id).textContent = left === 0 ? "Reached" : fmt(left) + " left";
+  const pct = Math.max(0, Math.min(100, (current / goal) * 100));
+  document.getElementById("p"+id).style.width = pct + "%";
+}
+function appendSpin(result, delta, note, levelBefore){
+  state.spins.unshift({
+    spin: state.spins.length + 1,
+    levelBefore,
+    result,
+    delta: round2(delta),
+    bankrollAfter: round2(state.bankroll),
+    highAfter: round2(state.sessionHigh),
+    note
+  });
+}
+function processSpin(result){
+  takeSnapshot();
+
+  const levelBefore = state.level;
+  let delta = 0;
+  let note = "";
+  if(result === "miss"){
+    delta = -6 * state.level * state.baseUnit;
+    state.level += 1;
+    state.dozenWinChain = 0;
+    note = "Loss: up 1 level";
+  } else if(result === "street"){
+    delta = 6 * state.level * state.baseUnit;
+    state.level = Math.max(1, state.level - 1);
+    state.dozenWinChain = 0;
+    note = "Street hit: down 1 level";
+  } else if(result === "dozen"){
+    delta = 3 * state.level * state.baseUnit;
+    if(state.dozenWinChain >= 1){
+      state.level = Math.max(1, state.level - 1);
+      state.dozenWinChain = 0;
+      note = "Second dozen win: down 1 level";
+    } else {
+      state.dozenWinChain = 1;
+      note = "First dozen win: stay same level";
+    }
+  }
+
+  state.bankroll = round2(state.bankroll + delta);
+
+  if(state.bankroll > state.sessionHigh){
+    state.sessionHigh = state.bankroll;
+    state.level = 1;
+    state.dozenWinChain = 0;
+    note = "New session high: reset to level 1";
+  }
+
+  if(!state.recoveryMode && state.bankroll < round2(state.startingBankroll * 0.55)){
+    state.recoveryMode = true;
+    note += (note ? " • " : "") + "Enter recovery mode";
+  }
+
+  appendSpin(result, delta, note, levelBefore);
+  updateUI();
+}
+function resetSession(){
+  state.startingBankroll = Number(document.getElementById("startingBankrollInput").value || state.startingBankroll);
+  state.targetProfit = Number(document.getElementById("targetProfitInput").value || state.targetProfit);
+  state.baseUnit = Number(document.getElementById("baseUnitInput").value || state.baseUnit);
+
+  state.bankroll = round2(state.startingBankroll);
+  state.sessionHigh = round2(state.startingBankroll);
+  state.level = 1;
+  state.dozenWinChain = 0;
+  state.recoveryMode = false;
+  state.spins = [];
+  state.historySnapshots = [];
+  updateUI();
+}
+function startFromCurrent(){
+  state.targetProfit = Number(document.getElementById("targetProfitInput").value || state.targetProfit);
+  state.baseUnit = Number(document.getElementById("baseUnitInput").value || state.baseUnit);
+  state.startingBankroll = round2(state.bankroll);
+  state.sessionHigh = round2(state.bankroll);
+  state.level = 1;
+  state.dozenWinChain = 0;
+  state.recoveryMode = false;
+  state.spins = [];
+  state.historySnapshots = [];
+  updateUI();
+}
+function undoLast(){
+  if(state.historySnapshots.length === 0) return;
+  const snap = state.historySnapshots.shift();
+  state.startingBankroll = snap.startingBankroll;
+  state.bankroll = snap.bankroll;
+  state.sessionHigh = snap.sessionHigh;
+  state.targetProfit = snap.targetProfit;
+  state.baseUnit = snap.baseUnit;
+  state.level = snap.level;
+  state.dozenWinChain = snap.dozenWinChain;
+  state.recoveryMode = snap.recoveryMode;
+  state.spins = snap.spins;
+  updateUI();
+}
+function finishAndSaveSession(){
+  const name = document.getElementById("sessionNameInput").value.trim();
+  const profit = round2(state.bankroll - state.startingBankroll);
+  state.savedSessions.push({
+    name,
+    date: todayStr(),
+    start: round2(state.startingBankroll),
+    end: round2(state.bankroll),
+    profit,
+    spins: state.spins.length
+  });
+  document.getElementById("sessionNameInput").value = "";
+  updateUI();
+}
+loadState();
+updateUI();
+</script>
+</body>
+</html>
