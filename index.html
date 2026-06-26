@@ -1,161 +1,225 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Double Dozen Recovery Tracker</title>
-  <style>
-    :root{
-      --bg:#050807; --card:#0e1512; --card2:#111c18; --text:#eef8f1; --muted:#8ea99a;
-      --green:#39ff88; --gold:#d8b85a; --red:#ff4d64; --line:#20342b; --blue:#63d2ff;
-      --shadow:0 16px 40px rgba(0,0,0,.35);
-    }
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    body{margin:0;background:radial-gradient(circle at top,#0d2118 0,#050807 45%,#020403 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh;padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom)}
-    .app{max-width:430px;margin:0 auto;padding:12px 0 26px}
-    .hero{padding:16px 12px 10px;text-align:center}
-    .title{font-size:24px;font-weight:900;letter-spacing:.3px;margin:0}.brand{color:var(--gold);font-size:12px;margin-top:4px;letter-spacing:1.8px;text-transform:uppercase}.pillrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}.pill{border:1px solid rgba(216,184,90,.45);color:var(--gold);border-radius:999px;padding:6px 10px;font-size:12px;background:rgba(216,184,90,.07)}
-    .card{background:linear-gradient(180deg,var(--card),var(--card2));border:1px solid var(--line);border-radius:22px;padding:14px;margin:10px 0;box-shadow:var(--shadow)}
-    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{background:#09100d;border:1px solid #1b3027;border-radius:16px;padding:10px;text-align:center;min-height:72px}.label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}.value{font-size:20px;font-weight:900;margin-top:5px}.value.big{font-size:30px}.green{color:var(--green)}.red{color:var(--red)}.gold{color:var(--gold)}.blue{color:var(--blue)}
-    .section-title{font-weight:900;margin:0 0 10px;font-size:15px;color:#f8fff9}.small{font-size:12px;color:var(--muted);line-height:1.35}.btn{width:100%;border:0;border-radius:16px;padding:14px 10px;font-size:16px;font-weight:900;color:#06100b;background:var(--green);box-shadow:0 8px 20px rgba(57,255,136,.18)}.btn.secondary{background:#17241e;color:var(--text);border:1px solid #294739;box-shadow:none}.btn.goldbtn{background:var(--gold);color:#140f03}.btn.redbtn{background:var(--red);color:#190206}.btn.bluebtn{background:var(--blue);color:#021018}.btn:active{transform:scale(.985)}
-    .dozens{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.dozen{background:#09100d;border:1px solid #244133;border-radius:18px;padding:12px 6px;text-align:center}.dozen.active{border-color:var(--green);box-shadow:0 0 0 1px rgba(57,255,136,.4) inset}.dozen.out{border-color:var(--red);opacity:.8}.dozen .dnum{font-size:20px;font-weight:900}.dozen .drange{font-size:11px;color:var(--muted);margin-top:2px}
-    input,select{width:100%;background:#07100c;border:1px solid #284637;border-radius:14px;color:var(--text);padding:13px 12px;font-size:16px;outline:none} select{appearance:none}.field{margin:8px 0}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px}
-    .log{max-height:220px;overflow:auto;border-radius:16px;border:1px solid #1b3027}.row{display:grid;grid-template-columns:42px 1fr 72px 60px;gap:6px;padding:9px 10px;border-bottom:1px solid #15251f;font-size:12px;align-items:center}.row:last-child{border-bottom:0}.rowhead{color:var(--muted);background:#07100c;position:sticky;top:0}.modal{position:fixed;inset:0;background:rgba(0,0,0,.86);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}.modal-card{width:min(430px,100%);background:linear-gradient(180deg,#101a16,#08100d);border:1px solid #294739;border-radius:24px;padding:18px;box-shadow:var(--shadow)}.hidden{display:none}.notice{padding:10px;border-radius:15px;border:1px solid #294739;background:#08110e;color:var(--muted);font-size:12px;line-height:1.35}.danger{border-color:rgba(255,77,100,.5);color:#ffd2d8;background:rgba(255,77,100,.08)}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simple Auto Generador de Facturas</title>
+<style>
+  :root { --bg:#f4f4f4; --card:#fff; --text:#222; --line:#ddd; }
+  * { box-sizing:border-box; }
+  body { font-family: Arial, sans-serif; margin:0; background:var(--bg); color:var(--text); }
+  .wrap { max-width:1100px; margin:auto; padding:18px; }
+  h1 { margin:0 0 12px; }
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px; margin-bottom:12px; }
+  label { display:block; font-size:13px; margin-top:8px; font-weight:bold; }
+  input, textarea, select { width:100%; padding:10px; border:1px solid #bbb; border-radius:8px; font-size:15px; }
+  textarea { min-height:70px; }
+  table { width:100%; border-collapse:collapse; margin-top:8px; }
+  th, td { border:1px solid var(--line); padding:7px; text-align:left; }
+  th { background:#eee; }
+  button { padding:10px 12px; border:0; border-radius:8px; cursor:pointer; margin:4px 4px 4px 0; font-weight:bold; }
+  .primary { background:#222; color:white; }
+  .good { background:#117a37; color:white; }
+  .danger { background:#b00020; color:white; }
+  .light { background:#e9e9e9; }
+  .totals { max-width:380px; margin-left:auto; }
+  .totals div { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #eee; }
+  .big { font-size:20px; font-weight:bold; }
+  .invoice-preview { background:white; padding:22px; border-radius:12px; border:1px solid #ddd; max-width:850px; margin:auto; }
+  .toprow { display:flex; justify-content:space-between; gap:20px; }
+  .muted { color:#666; font-size:13px; }
+  @media (max-width:800px){ .grid{grid-template-columns:1fr;} .toprow{display:block;} }
+  @media print {
+    body { background:white; }
+    .no-print { display:none !important; }
+    .wrap { max-width:none; padding:0; }
+    .card, .invoice-preview { border:0; border-radius:0; }
+  }
+</style>
 </head>
 <body>
-<div class="app">
-  <div class="hero">
-    <h1 class="title">Double Dozen Recovery</h1>
-    <div class="brand">Parapar.Media</div>
-    <div class="pillrow"><div class="pill">Follow last 2 dozens</div><div class="pill">Reset at previous high</div><div class="pill">5% target</div></div>
+<div class="wrap">
+  <div class="no-print">
+    <h1>Generador de Facturas</h1>
+    <p class="muted">Complete la informaciÃ³n, aÃ±ada piezas y mano de obra, marque pagado o pendiente y luego imprima o guarde en PDF.</p>
+
+    <div class="grid">
+      <div class="card">
+        <h3>InformaciÃ³n del Taller</h3>
+        <label>Nombre del Taller</label><input id="bizNombre" value="UNTLD">
+        <label>TelÃ©fono</label><input id="bizTelÃ©fono" value="9393320158">
+        <label>DirecciÃ³n</label><input id="bizDirecciÃ³n" placeholder="Business address">
+      </div>
+      <div class="card">
+        <h3>InformaciÃ³n de la Factura</h3>
+        
+        <label>Fecha</label><input id="date" type="date">
+        <label>Estado</label>
+        <select id="status"><option>PENDIENTE</option><option>PAGADA</option><option>PARCIAL</option></select>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Cliente</h3>
+        <label>Nombre</label><input id="custNombre">
+        <label>TelÃ©fono</label><input id="custTelÃ©fono">
+        <label>Cliente ID</label><input id="custId">
+      </div>
+      <div class="card">
+        <h3>VehÃ­culo</h3>
+        <label>AÃ±o / Marca / Modelo</label><input id="vehicle" placeholder="Example: 2013 BMW X3 28i">
+        <label>Tablilla</label><input id="plate">
+        <label>Millaje</label><input id="mileage">
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Detalles del Trabajo</h3>
+      <label>Problema / Trabajo Solicitado</label><textarea id="complaint"></textarea>
+      <label>DiagnÃ³stico / Notas</label><textarea id="notes"></textarea>
+    </div>
+
+    <div class="card">
+      <h3>Conceptos</h3>
+      <table id="itemsTable">
+        <thead><tr><th>Tipo</th><th>DescripciÃ³n</th><th>Cant.</th><th>Precio</th><th>Total</th><th class="no-print">Eliminar</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <button class="light" onclick="addItem('Pieza')">+ Pieza</button>
+      <button class="light" onclick="addItem('Mano de Obra')">+ Mano de Obra</button>
+      <button class="light" onclick="addItem('Otro')">+ Otro</button>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h3>Pago</h3>
+        <label>IVU</label>
+        <select id="taxOn"><option value="0">Sin IVU</option><option value="0.115">AÃ±adir IVU Puerto Rico 11.5%</option></select>
+        <label>DepÃ³sito / Cantidad Pagada</label><input id="paid" type="number" step="0.01" value="0">
+        <label>Pago Method</label>
+        <select id="payMethod"><option>Efectivo</option><option>ATH MÃ³vil</option><option>CrÃ©dito/DÃ©bito</option><option>Zelle</option><option>Otro</option></select>
+      </div>
+      <div class="card">
+        <h3>Acciones</h3>
+        <button class="primary" onclick="render()">Actualizar Factura</button>
+        <button class="good" onclick="saveLocal()">Guardar</button>
+        <button class="light" onclick="loadLocal()">Cargar</button>
+        <button class="danger" onclick="clearForm()">Nueva Factura</button>
+        <button class="primary" onclick="window.print()">Imprimir / Guardar PDF</button>
+      </div>
+    </div>
   </div>
 
-  <div class="card">
-    <div class="grid3">
-      <div class="stat"><div class="label">Bankroll</div><div id="bankroll" class="value big">$0.00</div></div>
-      <div class="stat"><div class="label">Profit</div><div id="profit" class="value big">$0.00</div></div>
-      <div class="stat"><div class="label">Level</div><div id="level" class="value big gold">1</div></div>
-    </div>
-    <div class="grid3" style="margin-top:8px">
-      <div class="stat"><div class="label">Prev High</div><div id="prevHigh" class="value">$0.00</div></div>
-      <div class="stat"><div class="label">Target</div><div id="target" class="value green">$0.00</div></div>
-      <div class="stat"><div class="label">Total Bet</div><div id="totalBet" class="value blue">$0.00</div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <p class="section-title">Active Dozens</p>
-    <div class="dozens">
-      <div id="d1" class="dozen"><div class="dnum">1st</div><div class="drange">1–12</div></div>
-      <div id="d2" class="dozen"><div class="dnum">2nd</div><div class="drange">13–24</div></div>
-      <div id="d3" class="dozen"><div class="dnum">3rd</div><div class="drange">25–36</div></div>
-    </div>
-    <div class="notice" style="margin-top:10px">Tap the result that landed. App updates the last 2 hitting dozens automatically. If 0 hits, tap Zero and the same dozens stay active.</div>
-  </div>
-
-  <div class="card">
-    <p class="section-title">Enter Spin Result</p>
-    <div class="grid2">
-      <button class="btn secondary" onclick="spin(1)">1st Dozen Hit</button>
-      <button class="btn secondary" onclick="spin(2)">2nd Dozen Hit</button>
-    </div>
-    <div class="grid2" style="margin-top:8px">
-      <button class="btn secondary" onclick="spin(3)">3rd Dozen Hit</button>
-      <button class="btn redbtn" onclick="spin(0)">Zero</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <p class="section-title">Session Control</p>
-    <div class="grid2">
-      <button class="btn goldbtn" onclick="openSetup(false)">Edit Session</button>
-      <button class="btn redbtn" onclick="resetAll()">Reset</button>
-    </div>
-    <div id="status" class="notice" style="margin-top:10px"></div>
-  </div>
-
-  <div class="card">
-    <p class="section-title">Spin Log</p>
-    <div class="log">
-      <div class="row rowhead"><div>#</div><div>Result</div><div>Level</div><div>Bank</div></div>
-      <div id="log"></div>
-    </div>
-  </div>
+  <div id="preview" class="invoice-preview"></div>
 </div>
 
-<div id="setup" class="modal">
-  <div class="modal-card">
-    <h2 style="margin:0 0 6px">Start Session</h2>
-    <div class="small">Use percentage scaling: unit ≈ 1% bankroll, target ≈ 5% bankroll.</div>
-    <div class="field"><label>Starting bankroll</label><input id="startInput" type="number" step="0.01" value="20"></div>
-    <div class="field"><label>Unit size</label><input id="unitInput" type="number" step="0.01" value="0.20"></div>
-    <div class="field"><label>Profit target</label><input id="targetInput" type="number" step="0.01" value="1.00"></div>
-    <div class="field"><label>Max level warning</label><input id="maxLevelInput" type="number" step="1" value="10"></div>
-    <div class="field"><label>Starting active pair</label><select id="pairInput"><option value="1,2">1st + 2nd</option><option value="1,3">1st + 3rd</option><option value="2,3">2nd + 3rd</option></select></div>
-    <button class="btn" onclick="startSession()">Start Tracker</button>
-  </div>
-</div>
 <script>
-const money = n => '$' + Number(n).toFixed(2);
-let s = JSON.parse(localStorage.getItem('ddRecovery')||'null') || null;
-function save(){ localStorage.setItem('ddRecovery', JSON.stringify(s)); }
-function init(){ if(!s){ document.getElementById('setup').classList.remove('hidden'); return; } document.getElementById('setup').classList.add('hidden'); render(); }
-function openSetup(newOnly=true){
-  if(s && !newOnly){
-    startInput.value=s.start; unitInput.value=s.unit; targetInput.value=s.targetProfit; maxLevelInput.value=s.maxLevel; pairInput.value=s.active.join(',');
-  }
-  document.getElementById('setup').classList.remove('hidden');
+function money(n){ return '$' + (Number(n)||0).toFixed(2); }
+function today(){ return new Fecha().toISOString().slice(0,10); }
+function nextInvoice(){
+  let n = localStorage.getItem('invoiceCounter') || '1001';
+  document.getElementById('invoiceNo').value = n;
+  localStorage.setItem('invoiceCounter', String(Number(n)+1));
 }
-function startSession(){
-  const start=parseFloat(startInput.value), unit=parseFloat(unitInput.value), target=parseFloat(targetInput.value), maxLevel=parseInt(maxLevelInput.value||'10',10);
-  if(!start||!unit||!target){ alert('Add bankroll, unit, and target.'); return; }
-  s={start, bankroll:start, prevHigh:start, unit, targetProfit:target, level:1, maxLevel, active:pairInput.value.split(',').map(Number), history:[], spins:0};
-  save(); init();
+function addItem(type='Pieza', desc='', qty=1, price=0){
+  const tbody = document.querySelector('#itemsTable tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><select><option ${type==='Pieza'?'selected':''}>Pieza</option><option ${type==='Mano de Obra'?'selected':''}>Mano de Obra</option><option ${type==='Otro'?'selected':''}>Otro</option></select></td>
+    <td><input value="${desc}"></td>
+    <td><input type="number" step="0.01" value="${qty}"></td>
+    <td><input type="number" step="0.01" value="${price}"></td>
+    <td class="lineTotal">$0.00</td>
+    <td class="no-print"><button class="danger" onclick="this.closest('tr').remove(); render();">X</button></td>`;
+  tbody.appendChild(tr);
+  tr.querySelectorAll('input,select').forEach(el => el.addEventListener('input', render));
+  render();
 }
-function spin(result){
-  if(!s) return;
-  const stake=s.unit*s.level*2;
-  if(s.bankroll < stake){ statusMsg('BUST: bankroll cannot cover next bet.', true); return; }
-  const before=s.bankroll; const wasCovered = result!==0 && s.active.includes(result);
-  if(wasCovered){ s.bankroll += s.unit*s.level; }
-  else { s.bankroll -= stake; }
-  let action = wasCovered ? 'WIN' : 'LOSS';
-  // update active pair: zero keeps same; dozen result becomes part of last 2 distinct dozens
-  if(result!==0 && !s.active.includes(result)){
-    s.active.shift(); s.active.push(result);
-  }
-  // progression after bankroll change
-  if(wasCovered){
-    if(s.bankroll >= s.prevHigh){
-      s.prevHigh = Math.max(s.prevHigh, s.bankroll);
-      s.level = 1;
-      action += ' / RESET';
-    } else {
-      s.level += 1;
-      action += ' / UP';
-    }
-  }
-  s.spins++;
-  s.history.unshift({n:s.spins,result,action,level:s.level,bankroll:s.bankroll,before});
-  s.history=s.history.slice(0,80);
-  save(); render();
+function getConceptos(){
+  return [...document.querySelectorAll('#itemsTable tbody tr')].map(tr => {
+    const v = tr.querySelectorAll('select,input');
+    return {type:v[0].value, desc:v[1].value, qty:Number(v[2].value)||0, price:Number(v[3].value)||0};
+  });
 }
+function totals(){
+  const items = getConceptos();
+  const subtotal = items.reduce((s,i)=>s+i.qty*i.price,0);
+  const taxRate = Number(document.getElementById('taxOn').value)||0;
+  const tax = subtotal * taxRate;
+  const total = subtotal + tax;
+  const paid = Number(document.getElementById('paid').value)||0;
+  return {subtotal,tax,total,paid,balance:total-paid};
+}
+function val(id){ return document.getElementById(id).value; }
 function render(){
-  bankroll.textContent=money(s.bankroll); profit.textContent=money(s.bankroll-s.start); prevHigh.textContent=money(s.prevHigh); target.textContent=money(s.start+s.targetProfit); level.textContent=s.level; totalBet.textContent=money(s.unit*s.level*2);
-  profit.className='value big '+(s.bankroll>=s.start?'green':'red');
-  [1,2,3].forEach(d=>{ let el=document.getElementById('d'+d); el.classList.remove('active','out'); el.classList.add(s.active.includes(d)?'active':'out'); });
-  log.innerHTML=s.history.map(h=>`<div class="row"><div>${h.n}</div><div>${h.result===0?'Zero':ordinal(h.result)} ${h.action}</div><div>${h.level}</div><div>${money(h.bankroll)}</div></div>`).join('');
-  let msg='Playing: '+s.active.map(ordinal).join(' + ')+'. ';
-  if(s.bankroll >= s.start+s.targetProfit) msg+='TARGET HIT — leave the table.';
-  else if(s.level>=s.maxLevel) msg+='MAX LEVEL WARNING — pause/leave.';
-  else msg+='Next bet: '+money(s.unit*s.level)+' on each dozen.';
-  statusMsg(msg, s.level>=s.maxLevel || s.bankroll>=s.start+s.targetProfit);
+  const items = getConceptos();
+  document.querySelectorAll('#itemsTable tbody tr').forEach((tr,idx)=>{
+    tr.querySelector('.lineTotal').textContent = money(items[idx].qty*items[idx].price);
+  });
+  const t = totals();
+  const rows = items.map(i=>`<tr><td>${i.type}</td><td>${i.desc}</td><td>${i.qty}</td><td>${money(i.price)}</td><td>${money(i.qty*i.price)}</td></tr>`).join('');
+  document.getElementById('preview').innerHTML = `
+    <div class="toprow">
+      <div>
+        <h2>${val('bizNombre') || 'Nombre del Taller'}</h2>
+        <div>${val('bizTelÃ©fono')}</div>
+        <div>${val('bizDirecciÃ³n')}</div>
+      </div>
+      <div>
+        <h2>FACTURA</h2>
+        
+        <div><b>Fecha:</b> ${val('date')}</div>
+        <div><b>Estado:</b> ${val('status')}</div>
+      </div>
+    </div>
+    <hr>
+    <div class="grid">
+      <div><h3>Facturar a</h3><div>${val('custNombre')}</div><div>${val('custTelÃ©fono')}</div></div>
+      <div><h3>VehÃ­culo</h3><div>${val('vehicle')}</div><div>Tablilla: ${val('plate')}</div><div>Millaje: ${val('mileage')}</div></div>
+    </div>
+    <h3>Trabajo Solicitado</h3><p>${val('complaint').replace(/\n/g,'<br>')}</p>
+    <h3>DiagnÃ³stico / Notas</h3><p>${val('notes').replace(/\n/g,'<br>')}</p>
+    <table><thead><tr><th>Tipo</th><th>DescripciÃ³n</th><th>Cant.</th><th>Precio</th><th>Total</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="totals">
+      <div><span>Subtotal</span><span>${money(t.subtotal)}</span></div>
+      <div><span>IVU</span><span>${money(t.tax)}</span></div>
+      <div class="big"><span>Total</span><span>${money(t.total)}</span></div>
+      <div><span>Pagado / DepÃ³sito</span><span>${money(t.paid)}</span></div>
+      <div class="big"><span>Balance</span><span>${money(t.balance)}</span></div>
+      <div><span>Pago Method</span><span>${val('payMethod')}</span></div>
+    </div>
+    <p class="muted">Gracias por su preferencia.</p>`;
 }
-function ordinal(n){ return n===1?'1st':n===2?'2nd':'3rd'; }
-function statusMsg(m,danger=false){ status.textContent=m; status.className='notice '+(danger?'danger':''); }
-function resetAll(){ if(confirm('Reset the full session?')){ localStorage.removeItem('ddRecovery'); s=null; openSetup(true); } }
-init();
+function formData(){
+  const ids = ['bizNombre','bizTelÃ©fono','bizDirecciÃ³n','invoiceNo','date','status','custNombre','custTelÃ©fono','custId','vehicle','plate','mileage','complaint','notes','taxOn','paid','payMethod'];
+  const data = {};
+  ids.forEach(id => data[id]=val(id));
+  data.items = getConceptos();
+  return data;
+}
+function saveLocal(){ localStorage.setItem('savedInvoice', JSON.stringify(formData())); alert('Saved in this browser.'); }
+function loadLocal(){
+  const data = JSON.parse(localStorage.getItem('savedInvoice') || '{}');
+  Object.keys(data).forEach(k => { if(document.getElementById(k)) document.getElementById(k).value = data[k]; });
+  document.querySelector('#itemsTable tbody').innerHTML='';
+  (data.items || []).forEach(i => addItem(i.type,i.desc,i.qty,i.price));
+  render();
+}
+function clearForm(){
+  if(!confirm('Clear invoice?')) return;
+  document.querySelectorAll('input,textarea').forEach(el => el.value='');
+  document.getElementById('date').value=today();
+  document.querySelector('#itemsTable tbody').innerHTML='';
+  addItem('Mano de Obra');
+  render();
+}
+document.getElementById('date').value = today();
+
+addItem('Mano de Obra','Mano de Obra',1,0);
+document.querySelectorAll('input,textarea,select').forEach(el => el.addEventListener('input', render));
+render();
 </script>
 </body>
 </html>
